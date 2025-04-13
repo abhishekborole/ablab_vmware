@@ -1,0 +1,16 @@
+---
+- name: Retrieve list of VMs from ESXi
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Gather list of VMs from ESXi
+      community.vmware.vmware_vm_info:
+        hostname: "{{ esxi_host }}"
+        username: "{{ esxi_user }}"
+        password: "{{ esxi_password }}"
+        validate_certs: no
+      register: vm_info
+
+    - name: Display list of VMs
+      debug:
+        var: vm_info.virtual_machines
