@@ -41,11 +41,11 @@
       loop: "{{ vm_list }}"
 
     - name: Start the VMs
-      community.vmware.vmware_vm_power:
+      community.vmware.vmware_guest_powerstate:
         hostname: "{{ esxi_host }}"
         username: "{{ esxi_user }}"
         password: "{{ esxi_password }}"
         validate_certs: no
-        vm_name: "{{ item.hostname }}"
+        name: "{{ item.hostname }}"
         state: powered_on
       loop: "{{ vm_list }}"
