@@ -11,7 +11,7 @@
         validate_certs: no
 
     - name: Deploy VMs from OVF
-      community.vmware.vmware_deploy_ovf_template:
+      community.vmware.vmware_deploy_ovf:
         hostname: "{{ esxi_host }}"
         username: "{{ esxi_user }}"
         password: "{{ esxi_password }}"
@@ -19,8 +19,8 @@
         datastore: "{{ datastore_name }}"
         cluster: ""
         vm_folder: ""
-        ovf_path: "{{ ovf_path }}"
-        vm_name: "{{ item.hostname }}"
+        ovf: "{{ ovf_path }}"
+        name: "{{ item.hostname }}"
         disk_provisioning: "thin"
       loop: "{{ vm_list }}"
       register: deployed_vms
