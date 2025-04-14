@@ -48,4 +48,5 @@
         validate_certs: no
         name: "{{ item.hostname }}"
         state: powered_on
+        datacenter: "ha-datacenter"
       loop: "{{ vm_list }}"
