@@ -1,17 +1,17 @@
 ---
 - name: Deploy VMs from OVF on ESXi
   hosts: localhost
-  gather_facts: no   
+  gather_facts: no
   tasks:
     - name: Connect to ESXi
-      community.vmware.vmware_host:
+      vmware.vmware.esxi_connection:
         hostname: "{{ esxi_host }}"
         username: "{{ esxi_user }}"
         password: "{{ esxi_password }}"
         validate_certs: no
 
     - name: Deploy VMs from OVF
-      community.vmware.vmware_deploy_ovf:
+      community.vmware.vmware_deploy_ovf_template:
         hostname: "{{ esxi_host }}"
         username: "{{ esxi_user }}"
         password: "{{ esxi_password }}"
@@ -19,8 +19,8 @@
         datastore: "{{ datastore_name }}"
         cluster: ""
         vm_folder: ""
-        ovf: "{{ ovf_path }}"
-        name: "{{ item.hostname }}"
+        ovf_path: "{{ ovf_path }}"
+        vm_name: "{{ item.hostname }}"
         disk_provisioning: "thin"
       loop: "{{ vm_list }}"
       register: deployed_vms
@@ -31,7 +31,7 @@
         username: "{{ esxi_user }}"
         password: "{{ esxi_password }}"
         validate_certs: no
-        vm_id: "{{ item.hostname }}"
+        vm_name: "{{ item.hostname }}"
         commands:
           - "guestinfo.labvm.hostname={{ item.hostname }}"
           - "guestinfo.labvm.ipaddr={{ item.ip }}"
@@ -41,11 +41,11 @@
       loop: "{{ vm_list }}"
 
     - name: Start the VMs
-      community.vmware.vmware_vm_powerstate:
+      community.vmware.vmware_vm_power:
         hostname: "{{ esxi_host }}"
         username: "{{ esxi_user }}"
         password: "{{ esxi_password }}"
         validate_certs: no
-        name: "{{ item.hostname }}"
+        vm_name: "{{ item.hostname }}"
         state: powered_on
       loop: "{{ vm_list }}"
