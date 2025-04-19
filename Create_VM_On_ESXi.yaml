@@ -2,6 +2,10 @@
   hosts: 10.0.1.1
   gather_facts: no
   tasks:
+    - name: Debug vmList passed to PowerShell
+      debug:
+        msg: "{{ vmList | to_json }}"
+
     - name: Run PowerShell script with parameters
       ansible.windows.win_shell: |
         powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -vmList "{{ vmList | to_json }}"
@@ -11,4 +15,4 @@
 
     - name: Display script output
       debug:
-        var: script_output.stdouts
+        var: script_output.stdout
