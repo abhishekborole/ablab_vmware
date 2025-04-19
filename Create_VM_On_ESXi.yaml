@@ -1,0 +1,14 @@
+- name: Run PowerShell Script on Remote Windows Server
+  hosts: 10.0.1.1
+  gather_facts: no
+  tasks:
+    - name: Run PowerShell script with parameters
+      ansible.windows.win_shell: |
+        powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -vmList "{{ vmList }}"
+      args:
+        executable: powershell.exe
+      register: script_output
+
+    - name: Display script output
+      debug:
+        var: script_output.stdouts
