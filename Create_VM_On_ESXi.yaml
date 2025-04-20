@@ -1,18 +1,21 @@
 - name: Run PowerShell Script on Remote Windows Server
   hosts: 10.0.1.1
-  gather_facts: no
-  tasks:
-    - name: Debug Hostname and IP Address
-      debug:
-        msg: "Hostname: {{ hostName }}, IP Address: {{ ipAddress }}"
+  gather_facts: no  
 
-    - name: Run PowerShell script with parameters
+  tasks:
+    - name: Debug VM List
+      debug:
+        msg: "{{ vm_list | to_json }}"
+
+    - name: Run PowerShell script for each VM
       ansible.windows.win_shell: |
-        powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -Hostname "{{ hostName }} -IPAddress {{ ipAddress }}"
+        powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -Hostname "{{ item.hostname }}" -IPAddress "{{ item.ip_address }}"
       args:
         executable: powershell.exe
+      loop: "{{ vm_list }}"
       register: script_output
 
-    - name: Display script output
+    - name: Display script output for each VM
       debug:
-        var: script_output.stdout
+        msg: "Output for {{ item.item.hostname }}: {{ item.stdout }}"
+      loop: "{{ script_output.results }}"
