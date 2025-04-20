@@ -6,7 +6,9 @@
     - name: Generate hostname for each VM
       include_tasks: Generate-Hostname.yaml
       vars:
+        prefix: "ABLAB"
         role_code: "{{ role_code }}"
+        index_file: "/var/lib/awx/projects/common/hostname_index.yml"
       loop: "{{ vm_list }}"
       loop_control:
         loop_var: vm_item
