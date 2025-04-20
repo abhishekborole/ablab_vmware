@@ -3,6 +3,7 @@
 This repository contains scripts and Ansible playbooks for managing VMware ESXi environments, including creating and managing virtual machines.
 
 ## Repository Structure
+```
 ablab_vmware/ 
     ├── Playbook/ │ 
         ├── Create_VM_On_ESXi.yaml │ 
@@ -12,7 +13,7 @@ ablab_vmware/
     ├── Scripts/ │ 
         ├── Build-UbuntuVM.ps1 
 └── README.md
-
+```
 ### Playbook Directory
 
 This directory contains Ansible playbooks for various VMware ESXi operations:
