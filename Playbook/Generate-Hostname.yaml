@@ -6,7 +6,6 @@
     role_code: "W"         # change to L, D, etc. as needed
 
   tasks:
-
     - name: Load current index file
       slurp:
         src: "/var/lib/awx/projects/common/hostname_index.yml"
