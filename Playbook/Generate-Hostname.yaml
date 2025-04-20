@@ -1,31 +1,55 @@
-# This task file generates and updates hostnames like ABLABW001 dynamically.
+# This task file generates and updates hostnames like ABLABW001 dynamically using a MySQL table.
 
-- name: Load current index file
-  slurp:
-    src: "{{ index_file }}"
-  register: index_file_raw
-  ignore_errors: true
+- name: Retrieve the current index from MySQL
+  community.mysql.mysql_query:
+    login_host: "192.168.1.58"
+    login_user: "mysqluser"
+    login_password: "{{ mysql_password }}"
+    login_database: "ablab_db"
+    query: "SELECT `index` FROM tblhostname_index WHERE role = '{{ role_code }}';"
+  register: mysql_index_result
 
-- name: Parse index data or initialize if file is missing
+- name: Initialize index if no entry exists
+  community.mysql.mysql_query:
+    login_host: "192.168.1.58"
+    login_user: "{{ mysql_user }}"
+    login_password: "{{ mysql_password }}"
+    login_database: "ablab_db"
+    query: "INSERT INTO tblhostname_index (role, `index`) VALUES ('{{ role_code }}', 0);"
+  when: mysql_index_result.results | length == 0
+
+- name: Retrieve the updated index after initialization (if needed)
+  community.mysql.mysql_query:
+    login_host: "192.168.1.58"
+    login_user: "{{ mysql_user }}"
+    login_password: "{{ mysql_password }}"
+    login_database: "ablab_db"
+    query: "SELECT `index` FROM tblhostname_index WHERE role = '{{ role_code }}';"
+  register: mysql_index_result
+  when: mysql_index_result.results | length == 0
+
+- name: Increment the index in MySQL
+  community.mysql.mysql_query:
+    login_host: "192.168.1.58"
+    login_user: "{{ mysql_user }}"
+    login_password: "{{ mysql_password }}"
+    login_database: "ablab_db"
+    query: "UPDATE tblhostname_index SET `index` = `index` + 1 WHERE role = '{{ role_code }}';"
+
+- name: Retrieve the new index value from MySQL
+  community.mysql.mysql_query:
+    login_host: "192.168.1.58"
+    login_user: "{{ mysql_user }}"
+    login_password: "{{ mysql_password }}"
+    login_database: "ablab_db"
+    query: "SELECT `index` FROM tblhostname_index WHERE role = '{{ role_code }}';"
+  register: mysql_new_index_result
+
+- name: Calculate the new hostname
   set_fact:
-    index_data: "{{ {} if index_file_raw.failed else index_file_raw.content | b64decode | from_yaml }}"
-
-- name: Calculate new index and hostname
-  set_fact:
-    full_key: "{{ prefix }}{{ role_code }}"
-    current_index: "{{ index_data[full_key] | default(0) }}"
-    new_index: "{{ current_index + 1 }}"
-    new_hostname: "{{ full_key }}{{ '%03d' | format(new_index) }}"
+    new_index: "{{ mysql_new_index_result.results[0].index }}"
+    new_hostname: "{{ prefix }}{{ role_code }}{{ '%03d' | format(new_index) }}"
 
 - name: Show the generated hostname
   debug:
     msg: "✅ New hostname: {{ new_hostname }}"
-
-- name: Update index with the new value
-  set_fact:
-    updated_index_data: "{{ index_data | combine({ full_key: new_index }) }}"
-
-- name: Write updated index back to the file
-  copy:
-    dest: "{{ index_file }}"
-    content: "{{ updated_index_data | to_nice_yaml }}"

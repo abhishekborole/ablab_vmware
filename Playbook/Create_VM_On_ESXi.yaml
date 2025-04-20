@@ -2,13 +2,19 @@
   hosts: 10.0.1.1
   gather_facts: no
 
+  vars:
+    prefix: "ABLAB"
+    mysql_host: "192.168.1.58"
+    mysql_user: "mysqluser"
+    mysql_password: "{{ mysql_password }}"
+    mysql_database: "ablab_db"
+
   tasks:
     - name: Generate hostname for each VM
       include_tasks: Generate-Hostname.yaml
       vars:
-        prefix: "ABLAB"
-        role_code: "{{ role_code }}"
-        index_file: "/var/lib/awx/projects/common/hostname_index.yml"
+        prefix: "{{ prefix }}"
+        role_code: "{{ vm_item.role_code }}"
       loop: "{{ vm_list }}"
       loop_control:
         loop_var: vm_item
