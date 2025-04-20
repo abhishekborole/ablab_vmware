@@ -2,13 +2,13 @@
   hosts: 10.0.1.1
   gather_facts: no
   tasks:
-    - name: Debug vmList passed to PowerShell
+    - name: Debug Hostname and IP Address
       debug:
-        msg: "{{ vmList | to_json }}"
+        msg: "Hostname: {{ hostName }}, IP Address: {{ ipAddress }}"
 
     - name: Run PowerShell script with parameters
       ansible.windows.win_shell: |
-        powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -vmList "{{ vmList | to_json }}"
+        powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -Hostname "{{ hostName }} -IPAddress {{ ipAddress }}"
       args:
         executable: powershell.exe
       register: script_output
