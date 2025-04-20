@@ -8,8 +8,7 @@ ablab_vmware/
     ├── Playbook/ │ 
         ├── Create_VM_On_ESXi.yaml │ 
         ├── Test_WinRM.yaml │ 
-        ├── VMware-ESXi-List-VMs.yaml │ 
-        ├── VMware-ESXi-VM-Create.yaml 
+        ├── VMware-ESXi-List-VMs.yaml │         
     ├── Scripts/ │ 
         ├── Build-UbuntuVM.ps1 
 └── README.md
@@ -21,7 +20,6 @@ This directory contains Ansible playbooks for various VMware ESXi operations:
 - **`Create_VM_On_ESXi.yaml`**: Runs a PowerShell script on a remote Windows server to create VMs on ESXi.
 - **`Test_WinRM.yaml`**: Tests WinRM connectivity to Windows hosts.
 - **`VMware-ESXi-List-VMs.yaml`**: Retrieves a list of virtual machines from an ESXi server.
-- **`VMware-ESXi-VM-Create.yaml`**: Deploys VMs from an OVF template on an ESXi server and configures advanced settings.
 
 ### Scripts Directory
 
