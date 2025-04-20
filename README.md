@@ -39,14 +39,14 @@ This directory contains PowerShell scripts for VMware ESXi management:
    ansible-playbook -i inventory Playbook/<playbook_name>.yaml
    ```
 
-Running PowerShell Scripts
+### Running PowerShell Scripts
 1. Copy the script Build-UbuntuVM.ps1 to the target Windows server.
 2. Execute the script with the required parameters:
 ```bash
 powershell.exe -File "C:\Scripts\Build-UbuntuVM.ps1" -Hostname <VM_Hostname> -IPAddress <VM_IPAddress>
 ```
-License
+### License
 This project is licensed under the MIT License.
 
 Author
-Abhishek Borole
+### Abhishek Borole
