@@ -5,7 +5,7 @@
     login_host: "192.168.1.58"
     login_user: "mysqluser"
     login_password: "{{ mysql_password }}"
-    login_database: "ablab_db"
+    login_db: "ablab_db"
     query: "SELECT `index` FROM tblhostname_index WHERE role = '{{ role_code }}';"
   register: mysql_index_result
   delegate_to: localhost
@@ -15,7 +15,7 @@
     login_host: "192.168.1.58"
     login_user: "{{ mysql_user }}"
     login_password: "{{ mysql_password }}"
-    login_database: "ablab_db"
+    login_db: "ablab_db"
     query: "INSERT INTO tblhostname_index (role, `index`) VALUES ('{{ role_code }}', 0);"
   when: mysql_index_result.results | length == 0
   delegate_to: localhost
@@ -25,7 +25,7 @@
     login_host: "192.168.1.58"
     login_user: "{{ mysql_user }}"
     login_password: "{{ mysql_password }}"
-    login_database: "ablab_db"
+    login_db: "ablab_db"
     query: "SELECT `index` FROM tblhostname_index WHERE role = '{{ role_code }}';"
   register: mysql_index_result
   when: mysql_index_result.results | length == 0
@@ -36,7 +36,7 @@
     login_host: "192.168.1.58"
     login_user: "{{ mysql_user }}"
     login_password: "{{ mysql_password }}"
-    login_database: "ablab_db"
+    login_db: "ablab_db"
     query: "UPDATE tblhostname_index SET `index` = `index` + 1 WHERE role = '{{ role_code }}';"
   delegate_to: localhost
 
@@ -45,7 +45,7 @@
     login_host: "192.168.1.58"
     login_user: "{{ mysql_user }}"
     login_password: "{{ mysql_password }}"
-    login_database: "ablab_db"
+    login_db: "ablab_db"
     query: "SELECT `index` FROM tblhostname_index WHERE role = '{{ role_code }}';"
   register: mysql_new_index_result
   delegate_to: localhost
