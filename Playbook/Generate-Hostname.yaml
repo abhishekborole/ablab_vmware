@@ -1,0 +1,38 @@
+- name: Generate and update hostnames like ABLABW001
+  hosts: localhost
+  gather_facts: false
+  vars:
+    prefix: "ABLAB"
+    role_code: "W"         # change to L, D, etc. as needed
+
+  tasks:
+
+    - name: Load current index file
+      slurp:
+        src: "/var/lib/awx/projects/common/hostname_index.yml"
+      register: index_file_raw
+      ignore_errors: true
+
+    - name: Parse index data or init
+      set_fact:
+        index_data: "{{ {} if index_file_raw.failed else index_file_raw.content | b64decode | from_yaml }}"
+
+    - name: Calculate new index
+      set_fact:
+        full_key: "{{ prefix }}{{ role_code }}"
+        current_index: "{{ index_data[full_key] | default(0) }}"
+        new_index: "{{ current_index + 1 }}"
+        new_hostname: "{{ full_key }}{{ '%03d' | format(new_index) }}"
+
+    - name: Show new hostname
+      debug:
+        msg: "✅ New hostname: {{ new_hostname }}"
+
+    - name: Update index
+      set_fact:
+        updated_index_data: "{{ index_data | combine({ full_key: new_index }) }}"
+
+    - name: Write back index file
+      copy:
+        dest: "{{ index_file }}"
+        content: "{{ updated_index_data | to_nice_yaml }}"

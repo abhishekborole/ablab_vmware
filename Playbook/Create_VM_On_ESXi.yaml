@@ -1,21 +1,31 @@
-- name: Run PowerShell Script on Remote Windows Server
+- name: Generate Hostnames and Run PowerShell Script on Remote Windows Server
   hosts: 10.0.1.1
-  gather_facts: no  
+  gather_facts: no
 
   tasks:
-    - name: Debug VM List
+    - name: Generate hostname for each VM
+      include_tasks: Generate-Hostname.yaml
+      vars:
+        role_code: "{{ role_code }}"
+      loop: "{{ vm_list }}"
+      loop_control:
+        loop_var: vm_item
+      register: generated_hostnames
+
+    - name: Debug generated hostnames
       debug:
-        msg: "{{ vm_list | to_json }}"
+        msg: "Generated hostname: {{ item.msg }}"
+      loop: "{{ generated_hostnames.results }}"
 
     - name: Run PowerShell script for each VM
       ansible.windows.win_shell: |
-        powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -Hostname "{{ item.hostname }}" -Subnet "{{ item.subnet }}"
+        powershell.exe -File "C:\Scripts\Create_VM_On_ESXi.ps1" -Hostname "{{ item.msg }}" -Subnet "{{ item.item.subnet }}"
       args:
         executable: powershell.exe
-      loop: "{{ vm_list }}"
+      loop: "{{ generated_hostnames.results }}"
       register: script_output
 
     - name: Display script output for each VM
       debug:
-        msg: "Output for {{ item.item.hostname }}: {{ item.stdout }}"
+        msg: "Output for {{ item.item.item.subnet }}: {{ item.stdout }}"
       loop: "{{ script_output.results }}"
