@@ -1,0 +1,46 @@
+---
+- name: Create VM shell on standalone ESXi
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - community.vmware
+
+  vars:
+    esxi_hostname: "192.168.1.51"   # ESXi host IP
+    esxi_username: "root"           # ESXi login
+    esxi_password: "VMware123!"     # ESXi password
+    vm_name: "Test-VM-Shell"
+    vm_datacenter: "ha-datacenter"  # Default for standalone ESXi
+    vm_folder: "/"
+    vm_datastore: "Datastore-SSD-01"
+    vm_network: "Nested - Trunked"
+    vm_guest_id: "otherGuest64"     # Generic 64-bit OS type
+    vm_cpu: 4
+    vm_memory: 8198
+    vm_disk_size: 100                # In GB
+
+  tasks:
+    - name: Create empty VM shell
+      vmware_guest:
+        hostname: "{{ esxi_hostname }}"
+        username: "{{ esxi_username }}"
+        password: "{{ esxi_password }}"
+        validate_certs: no
+        name: "{{ vm_name }}"
+        folder: "{{ vm_folder }}"
+        datacenter: "{{ vm_datacenter }}"
+        state: present
+        guest_id: "{{ vm_guest_id }}"
+        hardware:
+          memory_mb: "{{ vm_memory }}"
+          num_cpus: "{{ vm_cpu }}"
+          scsi: paravirtual
+        disk:
+          - size_gb: 100
+            type: thin
+            datastore: "Datastore-SSD-01"
+        networks:
+          - name: "{{ vm_network }}"
+            type: vmxnet3
+        wait_for_ip_address: no
+      delegate_to: localhost
