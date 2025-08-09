@@ -8,7 +8,11 @@
   vars:
     esxi_hostname: "192.168.1.51"   # ESXi host IP
     esxi_username: "root"           # ESXi login
+<<<<<<< HEAD
     esxi_password: "VMware123!"     # ESXi password
+=======
+    esxi_password: "VMware123!"  # ESXi password
+>>>>>>> 77403f8118e9a574fd2c722afd3d23cd832a2b74
     vm_name: "Test-VM-Shell"
     vm_datacenter: "ha-datacenter"  # Default for standalone ESXi
     vm_folder: "/"
@@ -35,10 +39,17 @@
           memory_mb: "{{ vm_memory }}"
           num_cpus: "{{ vm_cpu }}"
           scsi: paravirtual
+<<<<<<< HEAD
         disk:
           - size_gb: 100
             type: thin
             datastore: "Datastore-SSD-01"
+=======
+        disks:
+          - size_gb: "{{ vm_disk_size }}"
+            type: thin
+            datastore: "{{ vm_datastore }}"
+>>>>>>> 77403f8118e9a574fd2c722afd3d23cd832a2b74
         networks:
           - name: "{{ vm_network }}"
             type: vmxnet3
