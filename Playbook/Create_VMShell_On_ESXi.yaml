@@ -41,6 +41,8 @@
             datastore: "Datastore-SSD-01"
         networks:
           - name: "{{ vm_network }}"
-            type: vmxnet3
+            start_connected: yes
+            connected: yes
+            device_type: vmxnet3
         wait_for_ip_address: no
       delegate_to: localhost
